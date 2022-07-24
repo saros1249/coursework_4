@@ -15,7 +15,7 @@ python create_tables.py
 
 - Загрузка данных в базу
 ```shell
-python load_fixture.py
+python load_fixtures.py
 ```
 Скрпит читает файл fixtures.json и загружает данные в базу. Если данные уже загружены - выводит соответсвующее сообщение. 
 

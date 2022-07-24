@@ -20,6 +20,9 @@ class BaseConfig:
     PWD_HASH_SALT = base64.b64decode("salt")
     PWD_HASH_ITERATIONS = 100_000
 
+    JWT_ALG = 'HS256'
+    JWT_SECRET = 'sdg488$jn%'
+
     RESTX_JSON = {
         'ensure_ascii': False,
     }
@@ -55,4 +58,5 @@ class ConfigFactory:
         raise NotImplementedError
 
 
-config = ConfigFactory.get_config()
+config = DevelopmentConfig
+#config = ConfigFactory.get_config()
