@@ -3,16 +3,17 @@ import datetime
 
 import jwt
 
-from project.config import BaseConfig
+from project.config import JWT_SECRET, JWT_ALG
 from project.services.user_service import UserService
+
 
 
 class AuthService:
     def __init__(self, user_service: UserService):
         self.user_service = user_service
 
-    def generate_tokens(self, username, password, is_refresh=False):
-        user = self.user_service.get_by_username(username)
+    def generate_tokens(self, email, password, is_refresh=False):
+        user = self.user_service.get_by_email(email)
 
         if not user:
             return False
@@ -21,7 +22,7 @@ class AuthService:
             if not self.user_service.compare_passwords(password, user.password):
                 return False
 
-        data = {'username': user.username, 'role': user.role}
+        data = {'email': user.email}
 
         min30 = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
         data['exp'] = calendar.timegm(min30.timetuple())
@@ -35,8 +36,8 @@ class AuthService:
 
     def approve_refresh_token(self, refresh_token):
         data = jwt.decode(refresh_token, JWT_SECRET, algorithm=[JWT_ALG])
-        username = data['username']
-        user = self.user_service.get_by_username(username)
+        email = data['email']
+        user = self.user_service.get_by_email(email)
 
         if not user:
             return False
@@ -44,5 +45,8 @@ class AuthService:
         now = calendar.timegm(datetime.datetime.utcnow().timetuple())
         expired = data['exp']
         if now > expired:
-            return  False
-        return self.generate_tokens(username, user.password, is_refresh=True)
+            return False
+        return self.generate_tokens(email, user.password, is_refresh=True)
+
+
+

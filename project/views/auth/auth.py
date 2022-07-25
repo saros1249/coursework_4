@@ -1,22 +1,35 @@
-from flask import request
+from flask import request, make_response
 from flask_restx import Namespace, Resource
+
+from project.container import auth_service, user_service
 
 api = Namespace('auth')
 
 @api.route('/register')
 class AuthView(Resource):
     def post(self):
+        user = user_service.create(request.json)
+        res = make_response('Новый пользователь добавлен', 201)
+        res.headers['location'] = f'{api.path}/{user.id}'
+        return res
+
+@api.route('/login')
+class AuthView(Resource):
+    def post(self):
         req_json = request.json
-        username = req_json.get('username')
+        email = req_json.get('email')
         password = req_json.get('password')
-        if not username or password:
+        if not email or password:
             return 'Не введены данные: имя пользователя и/или пароль.', 400
 
-        tokens = auth_service.generate_tokens(username, password)
+        tokens = auth_service.generate_tokens(email, password)
         if tokens:
             return tokens
         else:
             return 'Ошибка запроса', 400
+
+@api.route('/login')
+class AuthView(Resource):
 
     def put(self):
         req_json = request.json
