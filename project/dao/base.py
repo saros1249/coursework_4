@@ -9,6 +9,7 @@ from werkzeug.exceptions import NotFound
 from project.container import user_service
 from project.models import User
 from project.setup.db.models import Base
+from project.tools import security
 
 T = TypeVar('T', bound=Base)
 
@@ -49,11 +50,17 @@ class BaseDAO(Generic[T]):
     def get_by_email(self, email):
         return self._db_session.query(User).filter(User.email == email).first()
 
-    def create(self, email):
-        ent = User(**email)
-        self._db_session.add(ent)
-        self._db_session.commit()
-        return ent
+    def create(self, login, password):
+        try:
+            self._db_session.add(User(email=login, password=security.generate_password_hash(password)))
+            self._db_session.commit()
+            return 'Пользователь добавлен'
+        except Exception as e:
+            self._db_session.rollback()
+            return e
+
+
+
 
     def update(self, user_d):
         user = self.get_by_id(user_d.get('id'))

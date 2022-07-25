@@ -35,7 +35,7 @@ class User(models.Base):
     __tablename__ = 'users'
 
     email = Column(String(100), unique=True, nullable=False)
-    password = Column(String(255))
+    password = Column(String(255), nullable=False)
     name = Column(String(100))
     surname = Column(String(100))
     favorite_genre = Column(Integer, ForeignKey(f'{Genre.__tablename__}.id'))
