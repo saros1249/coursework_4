@@ -25,19 +25,16 @@ class LoginView(Resource):
     def post(self):
         data_user = request.json
         if data_user.get('email') and data_user.get('password'):
-            user_service.check(data_user.get('email'), data_user.get('password'))
-            return user_service.get_by_email(data_user.get('email')), 201
+            return user_service.check(data_user.get('email'), data_user.get('password')), 201
         else:
             return 'Введены не все данные', 400
 
+    @api.response(404, 'Not Found')
+    @api.marshal_with(user, code=200, description='OK')
     #@auth_required
     def put(self):
-        req_json = request.json
-        if req_json.get('email') and req_json.get('password') and req_json.get('new_password'):
+        return user_service.check_tokens(request.json)
 
-            user_service.update_user_password(req_json.get('email'), req_json.get('password'), req_json.get('new_password'))
-
-        return 'Пароль успешно изменён.', 200
 
 
 

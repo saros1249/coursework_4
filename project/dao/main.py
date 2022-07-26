@@ -21,6 +21,33 @@ class DirectorsDAO(BaseDAO[Director]):
 class UsersDAO(BaseDAO[User]):
     __model__ = User
 
+    def get_by_email(self, email):
+        return self._db_session.query(User).filter(User.email == email).first()
+
+    def create(self, login, password):
+        try:
+            self._db_session.add(User(email=login, password=password))
+            self._db_session.commit()
+            return 'Пользователь добавлен'
+        except Exception as e:
+            self._db_session.rollback()
+            return e
+
+    def update(self, email, user_d):
+        user = self.get_by_email(email)
+        user.name = user_d.get('name')
+        user.surname = user_d.get('surname')
+        user.favorite_genre = user_d.get('favorite_genre')
+        self._db_session.add(user)
+        self._db_session.commit()
+
+    def update_user_password(self, email, new_password):
+        user = self.get_by_email(email)
+        user.password = new_password
+        self._db_session.add(user)
+        self._db_session.commit()
+
+
     def generate_tokens(self, login, password, is_refresh=False):
         user = self.get_by_email(login)
 

@@ -27,9 +27,9 @@ class UserService:
     def check(self, login, password):
         user_token = self.dao.generate_tokens(login, password)
         if security.compose_passwords(password, self.dao.get_by_email(login).password):
-            self.dao.approve_refresh_token(login, user_token.get('refresh_token'))
-            return 'Авторизация прошла успешно.'
-        return 'Не введён пароль'
+            tokens = self.dao.approve_refresh_token(login, user_token.get('refresh_token'))
+            return tokens
+
 
     def update_user_password(self, email, old_password, new_password):
         new_password = security.generate_password_hash(new_password)
@@ -37,5 +37,9 @@ class UserService:
             self.dao.update_user_password(email, new_password)
             return 'Пароль изменён'
         return 'Неверный пароль'
+
+
+    def check_tokens(self, tokens):
+      return self.dao.approve_refresh_token(login, user_token.get('refresh_token'))
 
 
