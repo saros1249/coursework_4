@@ -67,7 +67,7 @@ class BaseDAO(Generic[T]):
         self._db_session.commit()
 
     def update_user_password(self, email, new_password):
-        user = self.get_by_email(email).get('password')
+        user = self.get_by_email(email)
         user.password = new_password
         self._db_session.add(user)
         self._db_session.commit()

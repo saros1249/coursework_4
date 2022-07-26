@@ -1,8 +1,9 @@
 from flask import request
 from flask_restx import Namespace, Resource
-from project.container import user_service
+from project.container import user_service, user_dao
+from project.services.decorators import auth_required
 from project.setup.api.models import user
-from project.tools import security
+
 
 api = Namespace('auth')
 
@@ -13,7 +14,7 @@ class RegisterView(Resource):
         data_user = request.json
         if data_user.get('email') and data_user.get('password'):
             user_service.create(data_user.get('email'), data_user.get('password'))
-            return 'Создан новый пользователь', 201
+            return user_service.get_by_email(data_user.get('email')), 201
         else:
             return 'Введены не все данные', 400
 
@@ -24,22 +25,19 @@ class LoginView(Resource):
     def post(self):
         data_user = request.json
         if data_user.get('email') and data_user.get('password'):
-            return user_service.check(data_user.get('email'), data_user.get('password')), 201
+            user_service.check(data_user.get('email'), data_user.get('password'))
+            return user_service.get_by_email(data_user.get('email')), 201
         else:
             return 'Введены не все данные', 400
 
+    #@auth_required
     def put(self):
         req_json = request.json
-        ref_token = req_json.get('refresh_token')
-        if not ref_token:
+        if req_json.get('email') and req_json.get('password') and req_json.get('new_password'):
 
-            return 'Не задан токен', 400
+            user_service.update_user_password(req_json.get('email'), req_json.get('password'), req_json.get('new_password'))
 
-        tokens = security.approve_refresh_token(ref_token)
-        if tokens:
-            return tokens
-        else:
-            return 'Ошибка запроса', 400
+        return 'Пароль успешно изменён.', 200
 
 
 

@@ -2,6 +2,7 @@ from flask import request
 from flask_restx import Namespace, Resource
 
 from project.container import user_service
+from project.services.decorators import auth_required
 from project.setup.api.models import user
 
 api = Namespace('user')
@@ -10,8 +11,11 @@ api = Namespace('user')
 class UserView(Resource):
     @api.response(404, 'Not Found')
     @api.marshal_with(user, code=200, description='OK')
-    def get(self, email):
-        return user_service.get_one(email), 200
+    #@auth_required
+    def get(self):
+        user_data = request.json
+        token = request.headers
+        return user_service.get_by_email(email), 200
 
     def patch(self, email):
         self.user_service.update(email, request.json)
