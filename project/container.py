@@ -2,7 +2,6 @@ from project.dao import GenresDAO
 from project.dao.main import DirectorsDAO, MoviesDAO, UsersDAO
 
 from project.services import GenresService
-from project.services.auth_service import AuthService
 from project.services.director_service import DirectorsService
 from project.services.movie_service import MoviesService
 from project.services.user_service import UserService
@@ -19,4 +18,4 @@ genre_service = GenresService(dao=genre_dao)
 director_service = DirectorsService(dao=director_dao)
 movie_service = MoviesService(dao=movie_dao)
 user_service = UserService(dao=user_dao)
-auth_service = AuthService(user_service=user_service)
+

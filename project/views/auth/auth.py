@@ -1,8 +1,8 @@
-from flask import request, make_response
+from flask import request
 from flask_restx import Namespace, Resource
-
-from project.container import auth_service, user_service
+from project.container import user_service
 from project.setup.api.models import user
+from project.tools import security
 
 api = Namespace('auth')
 
@@ -33,7 +33,7 @@ class LoginView(Resource):
         if not ref_token:
             return 'Не задан токен', 400
 
-        tokens = auth_service.approve_refresh_token(ref_token)
+        tokens = security.approve_refresh_token(ref_token)
         if tokens:
             return tokens
         else:

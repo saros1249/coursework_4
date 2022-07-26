@@ -6,10 +6,9 @@ from sqlalchemy import desc
 from sqlalchemy.orm import scoped_session
 from werkzeug.exceptions import NotFound
 
-from project.container import user_service
 from project.models import User
 from project.setup.db.models import Base
-from project.tools import security
+
 
 T = TypeVar('T', bound=Base)
 
@@ -36,9 +35,9 @@ class BaseDAO(Generic[T]):
                 return []
         return stmt.all()
 
-    def get_by_status(self, page: Optional[int] = None, filter=None) -> List[T]:
+    def get_by_status(self, page: Optional[int] = None, filter_status=None) -> List[T]:
         stmt = self._db_session.query(self.__model__)
-        if filter:
+        if filter_status:
             stmt = stmt.order_by(desc(self.__model__.year))
         if page:
             try:
@@ -52,28 +51,24 @@ class BaseDAO(Generic[T]):
 
     def create(self, login, password):
         try:
-            self._db_session.add(User(email=login, password=security.generate_password_hash(password)))
+            self._db_session.add(User(email=login, password=password))
             self._db_session.commit()
             return 'Пользователь добавлен'
         except Exception as e:
             self._db_session.rollback()
             return e
 
-
-
-
-    def update(self, user_d):
-        user = self.get_by_id(user_d.get('id'))
+    def update(self, email, user_d):
+        user = self.get_by_email(email)
         user.name = user_d.get('name')
         user.surname = user_d.get('surname')
         user.favorite_genre = user_d.get('favorite_genre')
         self._db_session.add(user)
         self._db_session.commit()
 
-    def update_user_password(self, email, password, new_password):
-        user = self.get_by_email(email.get('password'))
-        user_service.compare_passwords(password, new_password)
-        user.password = user.get('new_password')
+    def update_user_password(self, email, new_password):
+        user = self.get_by_email(email).get('password')
+        user.password = new_password
         self._db_session.add(user)
         self._db_session.commit()
 
