@@ -12,9 +12,11 @@ class RegisterView(Resource):
     def post(self):
         data_user = request.json
         if data_user.get('email') and data_user.get('password'):
-            return user_service.create(data_user.get('email'), data_user.get('password')), 201
+            @api.doc('Создан новый пользователь')
+        return user_service.create(data_user.get('email'), data_user.get('password')), 201
         else:
-            return 'Введены не все данные', 400
+            @api.doc('Введены не все данные')
+            return 400
 
 @api.route('/login')
 class LoginView(Resource):
@@ -23,14 +25,17 @@ class LoginView(Resource):
     def post(self):
         data_user = request.json
         if data_user.get('email') and data_user.get('password'):
+            @api.doc('Пользователь авторизован.')
             return user_service.check(data_user.get('email'), data_user.get('password')), 201
         else:
-            return 'Введены не все данные', 400
+            @api.doc('Введены не все данные')
+            return 400
 
     def put(self):
         req_json = request.json
         ref_token = req_json.get('refresh_token')
         if not ref_token:
+
             return 'Не задан токен', 400
 
         tokens = security.approve_refresh_token(ref_token)
