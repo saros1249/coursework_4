@@ -13,15 +13,26 @@ class UserView(Resource):
     @api.marshal_with(user, code=200, description='OK')
     #@auth_required
     def get(self):
-        user_data = request.json
-        token = request.headers
-        return user_service.get_by_email(email), 200
+        token = request.headers.environ.get('HTTP_AUTHORIZATION').replace('Bearer ', '')
+        return user_service.get_user_by_token(refresh_token=token), 200
 
-    def patch(self, email):
-        self.user_service.update(email, request.json)
-        return f'Запись пользователя {email} изменена.', 200
+    @api.response(404, 'Not Found')
+    @api.marshal_with(user, code=200, description='OK')
+    # @auth_required
+    def patch(self):
+        user_d = request.json
+        token = request.headers.environ.get('HTTP_AUTHORIZATION').replace('Bearer ', '')
+        user = user_service.get_user_by_token(refresh_token=token)
+        return user_service.update(user.get('email'), user_d)
 
-    def put(self, email, password, new_password):
-        user_service.update(email, password, new_password)
-        return 204
+@api.route('/password')
+class UserPassUpdateViews:
+    @api.response(404, 'Not Found')
+    @api.marshal_with(user, code=200, description='OK')
+    # @auth_required
+    def put(self):
+        user_d = request.json
+        token = request.headers.environ.get('HTTP_AUTHORIZATION').replace('Bearer ', '')
+        user = user_service.get_user_by_token(refresh_token=token)
+        return user_service.update(user.get('email'), user_d)
 

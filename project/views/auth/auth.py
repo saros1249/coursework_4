@@ -33,7 +33,11 @@ class LoginView(Resource):
     @api.marshal_with(user, code=200, description='OK')
     #@auth_required
     def put(self):
-        return user_service.check_tokens(request.json)
+        data = request.json
+        if data.get('access_token') and data.get('refresh_token'):
+            return user_service.check_tokens(data.get('refresh_token')), 201
+        else:
+            return 'Введены не все данные', 400
 
 
 

@@ -1,3 +1,5 @@
+from flask import request
+
 from project.dao import UsersDAO
 from project.exceptions import ItemNotFound
 from project.models import User
@@ -27,19 +29,27 @@ class UserService:
     def check(self, login, password):
         user_token = self.dao.generate_tokens(login, password)
         if security.compose_passwords(password, self.dao.get_by_email(login).password):
-            tokens = self.dao.approve_refresh_token(login, user_token.get('refresh_token'))
-            return tokens
+            return self.dao.generate_tokens(login, user_token.get('refresh_token'))
 
 
-    def update_user_password(self, email, old_password, new_password):
-        new_password = security.generate_password_hash(new_password)
-        if self.check(email, old_password):
-            self.dao.update_user_password(email, new_password)
-            return 'Пароль изменён'
-        return 'Неверный пароль'
+
+    def update_user_password(self, user_d):
+        new_password = security.generate_password_hash(user_d.get('new_password'))
+        if self.check(user_d.get('email'), user_d.get('password')):
+            return self.dao.update_user_password(user_d.get('email'), new_password)
 
 
-    def check_tokens(self, tokens):
-      return self.dao.approve_refresh_token(login, user_token.get('refresh_token'))
+
+    def check_tokens(self, refresh_token):
+      return self.dao.check_tokens(refresh_token)
+
+
+    def get_user_by_token(self, refresh_token):
+        data = self.dao.data_by_token(refresh_token)
+
+        if data:
+            return self.get_by_email(data.get('email'))
+
+
 
 

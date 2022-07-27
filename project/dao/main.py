@@ -72,15 +72,17 @@ class UsersDAO(BaseDAO[User]):
         return {'access_token': access_token, 'refresh_token': refresh_token}
 
 
-    def approve_refresh_token(self, login, refresh_token):
-        data = jwt.decode(refresh_token, current_app.config['JWT_SECRET'], algorithms=current_app.config['JWT_ALG'])
+
+    def check_tokens(self, refresh_token):
+        data = self.data_by_token(refresh_token)
         email = data['email']
-        user = self.get_by_email(login)
+        password = data['password']
+        user = self.get_by_email(email)
         if not user:
             return False
 
-        now = calendar.timegm(datetime.datetime.utcnow().timetuple())
-        expired = data['exp']
-        if now > expired:
-            return False
-        return self.generate_tokens(email, user.password, is_refresh=True)
+        return self.generate_tokens(email, password, is_refresh=True)
+
+
+    def data_by_token(self,refresh_token):
+        return jwt.decode(refresh_token, current_app.config['JWT_SECRET'], algorithms=current_app.config['JWT_ALG'])
