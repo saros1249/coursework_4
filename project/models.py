@@ -16,7 +16,6 @@ class Director(models.Base):
     name = Column(String(100), unique=True, nullable=False)
 
 
-
 class Movie(models.Base):
     __tablename__ = 'movies'
 
@@ -40,4 +39,12 @@ class User(models.Base):
     surname = Column(String(100))
     favorite_genre = Column(Integer, ForeignKey(f'{Genre.__tablename__}.id'))
     genre = relationship('Genre')
-    #favorite = relationship('favorite_genre', secondary=favorite_genre, backref=backref('users', lazy='dynamic'))
+
+class Favorites_genres(models.Base):
+    __tablename__ = 'favorite_genre'
+
+    user_id = Column(Integer, ForeignKey(f'{User.__tablename__}.id'))
+    user = relationship('User')
+    genre_id = Column(Integer, ForeignKey(f'{Genre.__tablename__}.id'))
+    genre = relationship('Genre')
+

@@ -30,4 +30,13 @@ user: Model = api.model('Пользователь', {
     'name': fields.String(required=True, max_length=100, example='dik'),
     'surname': fields.String(required=True, max_length=100, example='dik'),
     'genre': fields.Nested(genre),
+
+
+})
+
+favorites_genres: Model = api.model('Избранные жанры', {
+    'id': fields.Integer(required=True, example=1),
+    'user': fields.Nested(user),
+    'genre': fields.Nested(genre),
+
 })

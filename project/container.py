@@ -1,5 +1,5 @@
-from project.dao import GenresDAO
-from project.dao.main import DirectorsDAO, MoviesDAO, UsersDAO
+from project.dao.main import DirectorsDAO, MoviesDAO, GenresDAO
+from project.dao.user_dao import UsersDAO
 
 from project.services import GenresService
 from project.services.director_service import DirectorsService
@@ -12,6 +12,7 @@ genre_dao = GenresDAO(db.session)
 director_dao = DirectorsDAO(db.session)
 movie_dao = MoviesDAO(db.session)
 user_dao = UsersDAO(db.session)
+
 
 # Services
 genre_service = GenresService(dao=genre_dao)

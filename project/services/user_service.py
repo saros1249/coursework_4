@@ -1,10 +1,7 @@
-from flask import request
-
-from project.dao import UsersDAO
+from project.dao.user_dao import UsersDAO
 from project.exceptions import ItemNotFound
 from project.models import User
 from project.tools import security
-
 
 class UserService:
     def __init__(self, dao: UsersDAO) -> None:
@@ -20,16 +17,22 @@ class UserService:
 
     def create(self, login, password):
         password_hash = security.generate_password_hash(password)
+        self.dao.generate_tokens(login, password_hash)
         self.dao.create(login, password_hash)
         return 'Новый пользователь создан'
 
-    def update(self, email, user_d):
-        self.dao.update(email, user_d)
+    def update(self, token, user_d):
+        user = self.get_by_email(self.dao.data_by_token(token).get('email'))
+        if 'name' in user_d:
+            user.name = user_d.get('name')
+        elif 'surname' in user_d:
+            user.surname = user_d.get('surname')
+        elif 'favorite_genre' in user_d:
+            user.favorite_genre = user_d.get('favorite_genre')
+        return self.dao.update(user)
 
     def check(self, login, password):
-        user_token = self.dao.generate_tokens(login, password)
-        if security.compose_passwords(password, self.dao.get_by_email(login).password):
-            return self.dao.generate_tokens(login, user_token.get('refresh_token'))
+        return self.dao.generate_tokens(login, password)
 
 
 
