@@ -18,6 +18,7 @@ def generate_password_hash(password: str) -> str:
 
 
 def compose_passwords(password, password_hash):
+    print(generate_password_hash(password))
     if generate_password_hash(password) == password_hash:
         return True
     return  False

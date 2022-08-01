@@ -40,11 +40,11 @@ class User(models.Base):
     favorite_genre = Column(Integer, ForeignKey(f'{Genre.__tablename__}.id'))
     genre = relationship('Genre')
 
-class Favorites_genres(models.Base):
-    __tablename__ = 'favorite_genre'
+
+class Favorites(models.Base):
+    __tablename__ = 'favorite'
 
     user_id = Column(Integer, ForeignKey(f'{User.__tablename__}.id'))
     user = relationship('User')
-    genre_id = Column(Integer, ForeignKey(f'{Genre.__tablename__}.id'))
-    genre = relationship('Genre')
-
+    movie_id = Column(Integer, ForeignKey(f'{Movie.__tablename__}.id'))
+    movie = relationship('Movie')

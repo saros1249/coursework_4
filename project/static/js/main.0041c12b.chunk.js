@@ -301,7 +301,7 @@
                 console.log(p)
             }), [p]);
             var S = function (e) {
-                N(e.email || ""), c(e.name || ""), r(e.surname || ""), j(e.favourite_genre || "")
+                N(e.email || ""), c(e.name || ""), r(e.surname || ""), j(e.favorite_genre || "")
             };
             return Object(x.jsxs)("div", {
                 className: Y.a.Profile,
@@ -333,7 +333,7 @@
                         label: "\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c",
                         onClick: function () {
                             var e;
-                            (e = Object(y.a)(Object(y.a)(Object(y.a)({}, n && {name: n}), s && {surname: s}), d && {favourite_genre: d}), H.patch("/user/", e)).then((function (e) {
+                            (e = Object(y.a)(Object(y.a)(Object(y.a)({}, n && {name: n}), s && {surname: s}), d && {favorite_genre: d}), H.patch("/user/", e)).then((function (e) {
                                 S(e.data), window.location = "/"
                             })).catch((function (e) {
                                 console.log(e.response)

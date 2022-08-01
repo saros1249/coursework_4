@@ -29,14 +29,14 @@ user: Model = api.model('Пользователь', {
     'password': fields.String(required=True, max_length=255, example='dgdfg'),
     'name': fields.String(required=True, max_length=100, example='dik'),
     'surname': fields.String(required=True, max_length=100, example='dik'),
-    'genre': fields.Nested(genre),
+    'favorite_genre': fields.Nested(genre),
 
 
 })
 
-favorites_genres: Model = api.model('Избранные жанры', {
+favorites: Model = api.model('Избранные фильмы', {
     'id': fields.Integer(required=True, example=1),
-    'user': fields.Nested(user),
-    'genre': fields.Nested(genre),
+    'user_id': fields.Nested(user),
+    'movie_id': fields.Nested(movie),
 
 })

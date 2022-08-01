@@ -1,24 +1,21 @@
+
 from project.dao.favorites_dao import FavoritesDAO
-from project.exceptions import ItemNotFound
+from project.services import UserService
 
 
 class FavoritesService:
-    def __init__(self, dao: FavoritesDAO) -> None:
+    def __init__(self, dao: FavoritesDAO, user_service: UserService) -> None:
         self.dao = dao
+        self.user_service = user_service
 
-    # def get_one(self, pk: int) -> User:
-    #     if user := self.dao.get_by_id(pk):
-    #         return user
-    #     raise ItemNotFound(f'User with pk={pk} not exists.')
-    #
-    #
-    # def create(self, login, password):
-    #     password_hash = security.generate_password_hash(password)
-    #     self.dao.generate_tokens(login, password_hash)
-    #     self.dao.create(login, password_hash)
-    #     return 'Новый пользователь создан'
-    #
-    # def update(self, email, user_d):
-    #     self.dao.update(email, user_d)
-    #
+    def get_all(self):
+        return self.dao.get_all()
 
+    def update(self, movie_id, token):
+        user_id = self.user_service.get_user_by_token(token)
+        self.dao.update(user_id.id, movie_id)
+
+
+    def delete(self, movie_id, token):
+        user_id = self.user_service.get_user_by_token(token)
+        self.dao.delete(user_id.id, movie_id)

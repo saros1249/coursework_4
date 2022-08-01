@@ -1,5 +1,3 @@
-
-
 from project.config import config
 from project.server import create_app
 

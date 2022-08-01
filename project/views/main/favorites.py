@@ -3,33 +3,32 @@
 from flask import request
 from flask_restx import Namespace, Resource
 
-from project.container import movie_service
-from project.services import favorites_service
-from project.setup.api.models import favorites_genres
+from project.container import movie_service, favorites_service
+from project.setup.api.models import favorites
 
 api = Namespace('favorites')
 
 
-@api.route('favorites/<int:user_id>/')
+@api.route('/movies/')
 class FavoritesView(Resource):
     @api.response(404, 'Not Found')
-    @api.marshal_with(favorites_genres, code=200, description='OK')
-    def get(self, user_id: int):
-        """
-        Get movie by id.
-        """
-        return favorites_service.get_item(user_id)
+    @api.marshal_with(favorites, code=200, description='OK')
+    def get(self):
+        return favorites_service.get_all()
+
+@api.route('/movies/<int:movie_id>/')
+class FavoriteView(Resource):
+    @api.response(404, 'Not Found')
+    @api.marshal_with(favorites, code=200, description='OK')
+    def post(self, movie_id):
+        token = request.headers.environ.get('HTTP_AUTHORIZATION').replace('Bearer ', '')
+        return favorites_service.update(movie_id, token)
+
 
     @api.response(404, 'Not Found')
-    @api.marshal_with(favorites_genres, code=200, description='OK')
-    def post(self):
-        pass
-
-
-    @api.response(404, 'Not Found')
-    @api.marshal_with(favorites_genres, code=200, description='OK')
-    def delete(self):
-        pass
-
+    @api.marshal_with(favorites, code=200, description='OK')
+    def delete(self, movie_id):
+        token = request.headers.environ.get('HTTP_AUTHORIZATION').replace('Bearer ', '')
+        return favorites_service.delete(movie_id, token)
 
 

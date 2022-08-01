@@ -21,7 +21,7 @@ class UserView(Resource):
     def patch(self):
         user_d = request.json
         token = request.headers.environ['HTTP_AUTHORIZATION'].replace('Bearer ', '')
-        return user_service.update(token, user_d)
+        return user_service.update(token, user_d), 200
 
 @api.route('/password/')
 class UserPassUpdateViews(Resource):
@@ -30,6 +30,5 @@ class UserPassUpdateViews(Resource):
     def put(self):
         user_d = request.json
         token = request.headers.environ['HTTP_AUTHORIZATION'].replace('Bearer ', '')
-        user_by_token = user_service.get_user_by_token(refresh_token=token)
-        return user_service.update_user_password(user_by_token, user_d)
-
+        user_service.update_user_password(token, user_d)
+        return user_service.update(token, user_d), 200
