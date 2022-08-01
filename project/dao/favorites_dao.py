@@ -7,6 +7,10 @@ from project.models import Favorites
 class FavoritesDAO(BaseDAO[Favorites]):
     __model__ = Favorites
 
+    def get_all_favorites(self, user_id):
+
+        favorite_data = self._db_session.query(Favorites).filter(Favorites.user_id == user_id).all()
+        return favorite_data
 
 
     def update(self, user_id, movie_id):
@@ -22,3 +26,4 @@ class FavoritesDAO(BaseDAO[Favorites]):
         favorite_id = self._db_session.query(Favorites).filter(and_(Favorites.user_id == user_id, Favorites.movie_id == movie_id)).first()
         self._db_session.delete(favorite_id)
         self._db_session.commit()
+        return 'Избранный фильм удалён.'

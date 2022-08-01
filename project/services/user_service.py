@@ -25,13 +25,10 @@ class UserService:
         user = self.get_by_email(self.dao.data_by_token(token).get('email'))
         if 'name' in user_d:
             user.name = user_d.get('name')
-            print(user_d.get('name'))
         if 'surname' in user_d:
             user.surname = user_d.get('surname')
         if 'favorite_genre' in user_d:
             user.favorite_genre = int(user_d.get('favorite_genre'))
-            print(user_d.get('favorite_genre'))
-            print(type(user_d.get('favorite_genre')))
         return self.dao.update(user)
     def check(self, login, password):
         return self.dao.generate_tokens(login, password)

@@ -31,7 +31,6 @@ user: Model = api.model('Пользователь', {
     'surname': fields.String(required=True, max_length=100, example='dik'),
     'favorite_genre': fields.Nested(genre),
 
-
 })
 
 favorites: Model = api.model('Избранные фильмы', {

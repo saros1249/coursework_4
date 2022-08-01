@@ -1,6 +1,6 @@
 
 
-from flask import request
+from flask import request, jsonify
 from flask_restx import Namespace, Resource
 
 from project.container import movie_service, favorites_service
@@ -14,7 +14,10 @@ class FavoritesView(Resource):
     @api.response(404, 'Not Found')
     @api.marshal_with(favorites, code=200, description='OK')
     def get(self):
-        return favorites_service.get_all()
+        token = request.headers.environ.get('HTTP_AUTHORIZATION').replace('Bearer ', '')
+        fav_list = favorites_service.get_all_favorites(token)
+        print(fav_list)
+        return jsonify(fav_list)
 
 @api.route('/movies/<int:movie_id>/')
 class FavoriteView(Resource):
