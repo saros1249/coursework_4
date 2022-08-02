@@ -8,13 +8,27 @@ from project.dao.base import BaseDAO
 from project.models import User
 from project.tools.security import compose_passwords
 
+
 class UsersDAO(BaseDAO[User]):
     __model__ = User
 
     def get_by_email(self, email):
+
+        """
+
+        Получение пользователя по EMAIL.
+
+        """
+
         return self._db_session.query(User).filter(User.email == email).first()
 
     def create(self, login, password):
+
+        """
+
+        Создание нового пользователя.
+
+        """
         try:
             self._db_session.add(User(email=login, password=password))
             self._db_session.commit()
@@ -24,16 +38,35 @@ class UsersDAO(BaseDAO[User]):
             return e
 
     def update(self, user):
+
+        """
+
+         Обновление данных пользователя(имяб фамилияб любимый жанр).
+
+        """
         self._db_session.add(user)
         self._db_session.commit()
 
     def update_user_password(self, email, new_password):
+
+        """
+
+        Обновление пароля пользователя.
+
+        """
+
         user = self.get_by_email(email)
         user.password = new_password
         self._db_session.add(user)
         self._db_session.commit()
 
     def generate_tokens(self, login, password, is_refresh=False):
+
+        """
+
+        Создание токенов.
+
+        """
 
         user = self.get_by_email(login)
 
@@ -58,6 +91,13 @@ class UsersDAO(BaseDAO[User]):
         return {'access_token': access_token, 'refresh_token': refresh_token}
 
     def check_tokens(self, refresh_token):
+
+        """
+
+         Проверка рефреш токенов на идентичность.
+         Если True, то создаётся новая пара токенов.
+
+        """
         data = self.data_by_token(refresh_token)
         email = data['email']
         password = data['exp']
@@ -69,4 +109,10 @@ class UsersDAO(BaseDAO[User]):
 
     @staticmethod
     def data_by_token(refresh_token):
+
+        """
+
+        Получение данных из токена.
+
+        """
         return jwt.decode(refresh_token, current_app.config['JWT_SECRET'], algorithms=current_app.config['JWT_ALG'])

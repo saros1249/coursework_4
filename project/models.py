@@ -38,7 +38,7 @@ class User(models.Base):
     name = Column(String(100))
     surname = Column(String(100))
     favorite_genre = Column(Integer, ForeignKey(f'{Genre.__tablename__}.id'))
-    genre = relationship('Genre')
+    genre = relationship('Genre', backref="userses")
 
 
 class Favorites(models.Base):
